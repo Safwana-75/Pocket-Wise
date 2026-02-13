@@ -8,32 +8,42 @@
 
     <div class="dashboard">
 
-        <h1 class="app-title">PocketWise</h1>
-        <h2 id="welcome"></h2>
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <h1 class="main-title">PocketWise</h1>
+            <h2 id="welcome" class="welcome-text"></h2>
+        </div>
 
-        <div class="top-cards">
+        <!-- TOP NAVIGATION PANEL -->
+        <div class="dashboard-nav">
+            <button onclick="window.location.href='expenses.html'">Expenses</button>
+            <button onclick="window.location.href='savings.html'">Savings</button>
+            <button onclick="window.location.href='calendar.html'">Calendar</button>
+        </div>
 
-            <div class="box">
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
                 <h3>Monthly Budget</h3>
                 <p id="budgetDisplay"></p>
             </div>
 
-            <div class="box">
+            <div class="stat-card">
                 <h3>Total Spent</h3>
                 <p id="spentDisplay"></p>
+            </div>
 
+            <div class="stat-card">
                 <h3>Remaining</h3>
                 <p id="remainingDisplay"></p>
+            </div>
 
+            <div class="stat-card">
                 <h3>Savings Goal</h3>
                 <p id="goalDisplay"></p>
             </div>
 
-        </div>
-
-        <div class="bottom-buttons">
-            <button onclick="window.location.href='expenses.html'">Expenses</button>
-            <button onclick="window.location.href='savings.html'">Savings</button>
         </div>
 
     </div>
@@ -42,4 +52,3 @@
 
 </body>
 </html>
-

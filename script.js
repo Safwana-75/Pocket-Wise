@@ -1,5 +1,10 @@
-// Save user name
-function saveName() {
+// ============================
+// LOGIN PAGE
+// ============================
+function saveName(event) {
+
+    event.preventDefault();
+
     const name = document.getElementById("username").value;
 
     if (name.trim() === "") {
@@ -12,8 +17,14 @@ function saveName() {
 }
 
 
-// Save budget and goal
-function saveSetup() {
+
+// ============================
+// SETUP PAGE
+// ============================
+function saveSetup(event) {
+
+    event.preventDefault();
+
     const budget = parseFloat(document.getElementById("budget").value);
     const goal = parseFloat(document.getElementById("goal").value);
 
@@ -24,44 +35,61 @@ function saveSetup() {
 
     localStorage.setItem("budget", budget);
     localStorage.setItem("goal", goal);
-
-    // Initialize these if not already
     localStorage.setItem("expenses", JSON.stringify([]));
-    localStorage.setItem("savings", 0);
+    localStorage.setItem("income", 0); // NEW: income storage
 
     window.location.href = "index.html";
 }
 
 
 
-// Load dashboard data
-function loadDashboard() {
-    const name = localStorage.getItem("username");
+// ============================
+// DASHBOARD PAGE
+// ============================
+if (window.location.pathname.includes("index.html")) {
+
+    const name = localStorage.getItem("username") || "User";
     const budget = parseFloat(localStorage.getItem("budget")) || 0;
-    const spent = parseFloat(localStorage.getItem("spent")) || 0;
-    const goal = localStorage.getItem("goal") || 0;
+    const goal = parseFloat(localStorage.getItem("goal")) || 0;
+    const income = parseFloat(localStorage.getItem("income")) || 0;
 
-    if (name) {
-        document.getElementById("welcome").innerText = "Welcome back, " + name + "!";
-    }
+    const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
-    if (document.getElementById("budgetDisplay")) {
-        document.getElementById("budgetDisplay").innerText = "₹ " + budget;
-        document.getElementById("spentDisplay").innerText = "₹ " + spent;
-        document.getElementById("remainingDisplay").innerText = "₹ " + (budget - spent);
-        document.getElementById("goalDisplay").innerText = "₹ " + goal;
-    }
+    const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0);
+
+    const remaining = budget + income - totalSpent;
+
+    document.getElementById("welcome").innerText =
+        "Welcome back, " + name + "!";
+
+    document.getElementById("budgetDisplay").innerText =
+        "₹ " + budget;
+
+    document.getElementById("spentDisplay").innerText =
+        "₹ " + totalSpent;
+
+    document.getElementById("remainingDisplay").innerText =
+        "₹ " + remaining;
+
+    document.getElementById("goalDisplay").innerText =
+        "₹ " + goal;
 }
-// ===== EXPENSES PAGE =====
 
+
+
+// ============================
+// EXPENSES PAGE
+// ============================
 if (window.location.pathname.includes("expenses.html")) {
 
     const budget = parseFloat(localStorage.getItem("budget")) || 0;
+    const income = parseFloat(localStorage.getItem("income")) || 0;
     let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
     function updateUI() {
+
         let totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0);
-        let remaining = budget - totalSpent;
+        let remaining = budget + income - totalSpent;
 
         document.getElementById("totalSpent").innerText = "₹ " + totalSpent;
         document.getElementById("currentBalance").innerText = "₹ " + remaining;
@@ -83,6 +111,7 @@ if (window.location.pathname.includes("expenses.html")) {
     }
 
     window.addExpense = function() {
+
         const amount = parseFloat(document.getElementById("amount").value);
         const category = document.getElementById("category").value;
 
@@ -92,8 +121,9 @@ if (window.location.pathname.includes("expenses.html")) {
         }
 
         let totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0);
+        let remaining = budget + income - totalSpent;
 
-        if (totalSpent + amount > budget) {
+        if (amount > remaining) {
             alert("Insufficient balance!");
             return;
         }
@@ -112,10 +142,13 @@ if (window.location.pathname.includes("expenses.html")) {
     let chart;
 
     function updateChart() {
+
         const categories = ["Food", "Travel", "Shopping", "Academic", "Other"];
+
         const data = categories.map(cat =>
-            expenses.filter(e => e.category === cat)
-                    .reduce((sum, e) => sum + e.amount, 0)
+            expenses
+                .filter(e => e.category === cat)
+                .reduce((sum, e) => sum + e.amount, 0)
         );
 
         if (chart) chart.destroy();
@@ -129,11 +162,11 @@ if (window.location.pathname.includes("expenses.html")) {
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        "#ACB493",
                         "#8A947B",
-                        "#D69F93",
-                        "#E0B6AC",
-                        "#677462"
+                        "#D6B0A6",
+                        "#b7e2c2",
+                        "#6F7863",
+                        "#F4EDE4"
                     ]
                 }]
             }
@@ -142,26 +175,44 @@ if (window.location.pathname.includes("expenses.html")) {
 
     updateUI();
 }
-// ===== SAVINGS PAGE =====
 
+
+
+// ============================
+// SAVINGS PAGE
+// ============================
 if (window.location.pathname.includes("savings.html")) {
 
-    let savings = parseFloat(localStorage.getItem("savings")) || 0;
+    const budget = parseFloat(localStorage.getItem("budget")) || 0;
     const goal = parseFloat(localStorage.getItem("goal")) || 0;
+    let income = parseFloat(localStorage.getItem("income")) || 0;
+    const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+    function calculateSavings() {
+
+        const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0);
+        return budget + income - totalSpent;
+    }
 
     function updateSavingsUI() {
 
-        document.getElementById("currentSavings").innerText = "₹ " + savings;
-        document.getElementById("savingsGoal").innerText = "₹ " + goal;
+        const currentSavings = calculateSavings();
+
+        document.getElementById("currentSavings").innerText =
+            "₹ " + currentSavings;
+
+        document.getElementById("savingsGoal").innerText =
+            "₹ " + goal;
 
         let progressPercent = 0;
 
         if (goal > 0) {
-            progressPercent = (savings / goal) * 100;
+            progressPercent = (currentSavings / goal) * 100;
             if (progressPercent > 100) progressPercent = 100;
         }
 
-        document.getElementById("progressFill").style.width = progressPercent + "%";
+        document.getElementById("progressFill").style.width =
+            progressPercent + "%";
     }
 
     window.addIncome = function() {
@@ -173,8 +224,8 @@ if (window.location.pathname.includes("savings.html")) {
             return;
         }
 
-        savings += amount;
-        localStorage.setItem("savings", savings);
+        income += amount;
+        localStorage.setItem("income", income);
 
         document.getElementById("incomeAmount").value = "";
 
@@ -182,33 +233,4 @@ if (window.location.pathname.includes("savings.html")) {
     };
 
     updateSavingsUI();
-}
-// ===== DASHBOARD PAGE =====
-if (window.location.pathname.includes("index.html")) {
-
-    const name = localStorage.getItem("username") || "User";
-    const budget = parseFloat(localStorage.getItem("budget")) || 0;
-    const goal = parseFloat(localStorage.getItem("goal")) || 0;
-
-    const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-
-    // Calculate total spent
-    const totalSpent = expenses.reduce((sum, item) => sum + item.amount, 0);
-
-    const remaining = budget - totalSpent;
-
-    document.getElementById("welcome").innerText =
-        "Welcome back, " + name + "!";
-
-    document.getElementById("budgetDisplay").innerText =
-        "₹ " + budget;
-
-    document.getElementById("spentDisplay").innerText =
-        "₹ " + totalSpent;
-
-    document.getElementById("remainingDisplay").innerText =
-        "₹ " + remaining;
-
-    document.getElementById("goalDisplay").innerText =
-        "₹ " + goal;
 }
