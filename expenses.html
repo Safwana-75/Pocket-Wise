@@ -48,14 +48,23 @@
 
             <input type="number" id="amount" placeholder="Enter Amount">
 
-            <select id="category">
+            <!-- ONLY ONE SELECT -->
+            <select id="category" onchange="handleCategoryChange()">
                 <option value="">Select Category</option>
-                <option>Food</option>
-                <option>Travel</option>
-                <option>Shopping</option>
-                <option>Academic</option>
-                <option>Other</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Academic">Academic</option>
+                <option value="Other">Other</option>
             </select>
+
+            <!-- Custom category input (hidden by default) -->
+            <input 
+                type="text" 
+                id="customCategory" 
+                placeholder="Enter custom category"
+                style="display: none; margin-top:10px;"
+            >
 
             <button onclick="addExpense()">Add Expense</button>
         </div>
@@ -79,3 +88,4 @@
 
 </body>
 </html>
+
