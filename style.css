@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6fb;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 20px;
+}
+
+.welcome {
+    margin: 30px 0;
+}
+
+.summary {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    width: 200px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.buttons {
+    margin-bottom: 50px;
+}
+
+.main-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    margin: 10px;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    color: white;
+}
+
+.expense-btn {
+    background-color: #5bbf9b;
+}
+
+.savings-btn {
+    background-color: #f4b860;
+}
+
+.main-btn:hover {
+    opacity: 0.9;
+}
